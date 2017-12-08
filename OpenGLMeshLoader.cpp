@@ -53,6 +53,10 @@ float xwall4 = 2;
 float ywall4 = 0;
 int game_over = 0;
 
+int win = 0;
+float xgoblin = -5;
+float ygoblin = 2;
+
 int lives = 2;
 int score = 0;
 class Vector
@@ -616,6 +620,76 @@ void normalMinion() {
 
 }
 
+void drawGoblin() {
+	//draw head
+	glPushMatrix();
+	glColor3f(0, 1, 0);
+	glScaled(0.1, 0.125, 0.1);
+	glutSolidSphere(0.5, 50, 50);
+	glPopMatrix();
+	//draw eye
+	glPushMatrix();
+	glColor3f(0, 0, 0);
+	glTranslated(0.022, 0.04, 0.03);
+	glScaled(0.02, 0.02, 0.02);
+	glutSolidSphere(0.4, 50, 50);
+	glPopMatrix();
+	//draw eye
+	glPushMatrix();
+	glColor3f(0, 0, 0);
+	glTranslated(-0.022, 0.04, 0.03);
+	glScaled(0.02, 0.02, 0.02);
+	glutSolidSphere(0.4, 50, 50);
+	glPopMatrix();
+	//draw body
+	glPushMatrix();
+	glColor3f(0, 1, 0);
+	glTranslated(0, -0.1, 0);
+	glScaled(0.1, 0.25, 0.1);
+	glutSolidSphere(0.5, 50, 50);
+	glPopMatrix();
+	//draw right leg
+	glPushMatrix();
+	glTranslated(-0.025, -0.2, 0);
+	glScaled(0.03, 0.15, 0.03);
+	glutSolidCube(1);
+	glPopMatrix();
+	//draw left leg
+	glPushMatrix();
+	glTranslated(0.025, -0.2, 0);
+	glScaled(0.03, 0.15, 0.03);
+	glutSolidCube(1);
+	glPopMatrix();
+	//draw right hand
+	glPushMatrix();
+	glTranslated(-0.06, -0.05, -0.001);
+	glScaled(0.17, 0.03, 0.03);
+	glutSolidCube(1);
+	glPopMatrix();
+	//draw left hand
+	glPushMatrix();
+	glTranslated(0.06, -0.05, -0.001);
+	glScaled(0.17, 0.03, 0.03);
+	glutSolidCube(1);
+	glPopMatrix();
+	//draw right ear
+	glPushMatrix();
+	glTranslated(-0.68, -0.35, -0.5);
+	glRotated(-90, 1, 0, 0);
+	glRotated(45, 0, 0, 1);
+	glTranslated(0.15, -0.85, 0.4);
+	glutSolidCone(0.015, 0.05, 50, 50);
+	glPopMatrix();
+	//draw leftt ear
+	glPushMatrix();
+	glTranslated(-0.68, -0.35, -0.5);
+	glRotated(-90, 1, 0, 0);
+	glRotated(45, 0, 0, 1);
+	glTranslated(0.12, -0.82, 0.4);
+	glutSolidCone(0.015, 0.05, 50, 50);
+	glPopMatrix();
+}
+
 
 void setupLights() {
 	GLfloat ambient[] = { 0.7f, 0.7f, 0.7, 1.0f };
@@ -744,6 +818,17 @@ void myDisplay(void)
 	model_wall.Draw();
 	glPopMatrix();
 
+	// Draw goblin
+	glPushMatrix();
+	glTranslatef(xgoblin, ygoblin, zground1 - 3);
+	glRotated(wall1_angle, 0, 1, 0);
+	glRotated(wall1_angle, 1, 0, 0);
+	glScalef(6, 6, 6);
+	drawGoblin();
+	glPopMatrix();
+
+	
+
 
 
 	glColor3f(1, 1, 1);
@@ -772,7 +857,7 @@ void myDisplay(void)
 void camRot(int value) {
 	if (stop_rotation == 1)
 		return;
-	if (game_over == 1)
+	if (game_over == 1 || win == 1)
 		return;
 
 	float radius = 24.8;
@@ -793,7 +878,7 @@ void camRot(int value) {
 void camRotInverse(int value) {
 	if (stop_rotation == 1)
 		return;
-	if (game_over == 1)
+	if (game_over == 1 || win == 1)
 		return;
 
 	float radius = 24.8;
@@ -812,32 +897,41 @@ void camRotInverse(int value) {
 	glutPostRedisplay();
 }
 
+float step_goblin = 0.0;
 //Animate Ground
 void animateGround(int value) {
-	if (game_over == 1)
+	if (game_over == 1 || win == 1)
 		return;
 
 	if (zground1 > 80) {
-		zground1 = -79.9;
+		score += 5;
+		zground1 = -79.7;
 		ywall1 = 0;
 	}
 	if (zground2 > 80) {
-		zground2 = -79.9;
+		zground2 = -79.7;
 		ywall2 = 0;
 	}
 	if (zground3 > 80) {
-		zground3 = -79.9;
+		zground3 = -79.7;
 		ywall3 = 0;
 	}
 	if (zground4 > 80) {
-		zground4 = -79.9;
+		zground4 = -79.7;
 		ywall4 = 0;
 	}
 
-	zground1 += 0.1;
-	zground2 += 0.1;
-	zground3 += 0.1;
-	zground4 += 0.1;
+	if (xgoblin < -5)
+		step_goblin = 0.1;
+	if (xgoblin > 5)
+		step_goblin = -0.1;
+
+	xgoblin += step_goblin;
+
+	zground1 += 0.3;
+	zground2 += 0.3;
+	zground3 += 0.3;
+	zground4 += 0.3;
 
 	if (xnormal > xwall1 && xnormal < xwall1+10 && ynormal > ywall1 && ynormal < ywall1+8 &&
 		znormal <= (zground1+16) && znormal > (zground1 + 15)) {
@@ -900,12 +994,28 @@ void animateGround(int value) {
 
 	}
 
+	if (xnormal > xgoblin -1 && xnormal < xgoblin+1 && ynormal >= ygoblin-1 && ynormal <= ygoblin+4 &&
+		znormal <= (zground1 +17) && znormal >(zground1 + 15)) {
+		zpirate += 5;
+		ygoblin = -100;
+		lives++;
+		score += 10;
+		minion_scale += 0.05;
+		if (lives == 3) {
+			glClearColor(0, 1, 0, 0);
+			win = 1;
+			char *message = "Congratulations!You win with a final score ";
+			print(1, 15, 25, message);
+		}
+
+	}
+
 	glutPostRedisplay();
 	glutTimerFunc(0.004 * 1000, animateGround, 0);
 }
 //Animate Wall1
 void animateWall1(int value) {
-	if (game_over == 1)
+	if (game_over == 1 || win == 1)
 		return;
 
 	wall1_angle += 5;
@@ -913,11 +1023,14 @@ void animateWall1(int value) {
 	glutPostRedisplay();
 	glutTimerFunc(0.004 * 1000, animateWall1, 0);
 }
+
+
+
 //minion jump
 int stop = 0;
 float step = 0.3;
 void minionJump(int value) {
-	if (game_over == 1)
+	if (game_over == 1 || win == 1)
 		return;
 	if (stop == 1)
 		return;
@@ -970,7 +1083,7 @@ void myKeyboard(unsigned char button, int x, int y)
 	glutPostRedisplay();
 }
 void SpecialKeys(int key, int xx, int yy) {
-	if (game_over == 1)
+	if (game_over == 1 || win == 1)
 		return;
 	switch (key) {
 	case GLUT_KEY_LEFT:
@@ -1065,6 +1178,8 @@ void main(int argc, char** argv)
 	//glutTimerFunc(0, camRot, 0);
 	glutTimerFunc(0.02 * 1000, animateGround, 0);
 	glutTimerFunc(0.02 * 1000, animateWall1, 0);
+	//glutTimerFunc(0.02 * 1000, animateFunky2, 0);
+	//glutTimerFunc(0.02 * 1000, animateFunky4, 0);
 
 	glutCreateWindow(title);
 
