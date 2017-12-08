@@ -24,6 +24,7 @@ float xnormal = 1.65;
 bool normal_up = true;
 int normal_angle = 0;
 bool move_normal = false;
+float minion_scale = 0.4;
 // Pirate Minion
 float xPirate = 0.0;
 float yPirate = 0.2;
@@ -44,9 +45,16 @@ float zground4 = 40;
 float wall1_angle = 0;
 float xwall1 = 5;
 float ywall1 = 0;
+float xwall2 = -5;
+float ywall2 = 0;
+float xwall3 = 0;
+float ywall3 = 0;
+float xwall4 = 2;
+float ywall4 = 0;
 int game_over = 0;
 
 int lives = 2;
+int score = 0;
 class Vector
 {
 public:
@@ -676,7 +684,7 @@ void myDisplay(void)
 	glPopMatrix();
 
 	glPushMatrix();
-	glScaled(0.4, 0.4, 0.4);
+	glScaled(minion_scale, minion_scale, minion_scale);
 	glColor3f(1, 1, 1);
 	glTranslated(xnormal, ynormal, znormal);
 	glRotated(180, 0, 1, 0);
@@ -710,6 +718,27 @@ void myDisplay(void)
 	// Draw Wall Model
 	glPushMatrix();
 	glTranslatef(xwall1, ywall1, zground1-3);
+	glScalef(4.7, 2.7, 2.7);
+	glRotated(wall1_angle, 0, 1, 0);
+	model_wall.Draw();
+	glPopMatrix();
+	// Draw Wall Model
+	glPushMatrix();
+	glTranslatef(xwall2, ywall2, zground2 - 3);
+	glScalef(4.7, 2.7, 2.7);
+	glRotated(wall1_angle, 0, 1, 0);
+	model_wall.Draw();
+	glPopMatrix();
+	// Draw Wall Model
+	glPushMatrix();
+	glTranslatef(xwall3, ywall3, zground3 - 3);
+	glScalef(4.7, 2.7, 2.7);
+	glRotated(wall1_angle, 0, 1, 0);
+	model_wall.Draw();
+	glPopMatrix();
+	// Draw Wall Model
+	glPushMatrix();
+	glTranslatef(xwall4, ywall4, zground4 - 3);
 	glScalef(4.7, 2.7, 2.7);
 	glRotated(wall1_angle, 0, 1, 0);
 	model_wall.Draw();
@@ -792,12 +821,18 @@ void animateGround(int value) {
 		zground1 = -79.9;
 		ywall1 = 0;
 	}
-	if (zground2 > 80)
+	if (zground2 > 80) {
 		zground2 = -79.9;
-	if (zground3 > 80)
+		ywall2 = 0;
+	}
+	if (zground3 > 80) {
 		zground3 = -79.9;
-	if (zground4 > 80)
+		ywall3 = 0;
+	}
+	if (zground4 > 80) {
 		zground4 = -79.9;
+		ywall4 = 0;
+	}
 
 	zground1 += 0.1;
 	zground2 += 0.1;
@@ -805,10 +840,12 @@ void animateGround(int value) {
 	zground4 += 0.1;
 
 	if (xnormal > xwall1 && xnormal < xwall1+10 && ynormal > ywall1 && ynormal < ywall1+8 &&
-		znormal <= (zground1+15) && znormal > (zground1 + 13)) {
+		znormal <= (zground1+16) && znormal > (zground1 + 15)) {
 		zpirate -= 5;
 		ywall1 = -100;
 		lives--;
+		score -= 10;
+		minion_scale -= 0.05;
 		if (lives <= 0) {
 			xnormal = -15;
 			glClearColor(1, 0, 0, 0);
@@ -816,6 +853,51 @@ void animateGround(int value) {
 			print(1, 15, 25, "Game Over");
 		}
 			
+	}
+	if (xnormal > xwall2-12 && xnormal < xwall2 && ynormal > ywall2 && ynormal < ywall2 + 8 &&
+		znormal <= (zground2 + 16) && znormal >(zground2 + 15)) {
+		zpirate -= 5;
+		ywall2 = -100;
+		lives--;
+		score -= 10;
+		minion_scale -= 0.05;
+		if (lives <= 0) {
+			xnormal = -15;
+			glClearColor(1, 0, 0, 0);
+			game_over = 1;
+			print(1, 15, 25, "Game Over");
+		}
+
+	}
+	if (xnormal > xwall3-5 && xnormal < xwall3 + 5 && ynormal > ywall3 && ynormal < ywall3 + 8 &&
+		znormal <= (zground3 + 16) && znormal >(zground3 + 15)) {
+		zpirate -= 5;
+		ywall3 = -100;
+		lives--;
+		score -= 10;
+		minion_scale -= 0.05;
+		if (lives <= 0) {
+			xnormal = -15;
+			glClearColor(1, 0, 0, 0);
+			game_over = 1;
+			print(1, 15, 25, "Game Over");
+		}
+
+	}
+	if (xnormal > xwall4 && xnormal < xwall4 + 10 && ynormal > ywall4 && ynormal < ywall4 + 8 &&
+		znormal <= (zground4 + 16) && znormal >(zground4 + 15)) {
+		zpirate -= 5;
+		ywall4 = -100;
+		lives--;
+		score -= 10;
+		minion_scale -= 0.05;
+		if (lives <= 0) {
+			xnormal = -15;
+			glClearColor(1, 0, 0, 0);
+			game_over = 1;
+			print(1, 15, 25, "Game Over");
+		}
+
 	}
 
 	glutPostRedisplay();
