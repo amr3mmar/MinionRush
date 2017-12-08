@@ -20,12 +20,14 @@ GLdouble zFar = 100;
 //  Normal Minion
 float ynormal = 1.5;
 float znormal = 30;
+float xnormal = 1.65;
 bool normal_up = true;
 int normal_angle = 0;
 bool move_normal = false;
 // Pirate Minion
 float xPirate = 0.0;
 float yPirate = 0.2;
+float zpirate = -20;
 float tPirate = 0;
 int swordAngle = 0;
 int sword_swing = 0;
@@ -39,8 +41,12 @@ float zground1 = 0;
 float zground2 = -40;
 float zground3 = -80;
 float zground4 = 40;
+float wall1_angle = 0;
+float xwall1 = 5;
+float ywall1 = 0;
+int game_over = 0;
 
-
+int lives = 2;
 class Vector
 {
 public:
@@ -68,9 +74,20 @@ int cameraZoom = 0;
 // Model Variables
 Model_3DS model_house;
 Model_3DS model_tree;
+Model_3DS model_wall;
 
 // Textures
 GLTexture tex_ground;
+
+void print(float x, float y, float z, char *string) {
+	int len, i;
+	glRasterPos3f(x, y, z);
+	len = (int)strlen(string);
+	for ( i = 0; i < len; i++)
+	{
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
+	}
+}
 
 //=======================================================================
 // Lighting Configuration Function
@@ -164,37 +181,6 @@ void myInit(void)
 // Render Ground Function
 //=======================================================================
 void RenderGround()
-{
-	glDisable(GL_LIGHTING);	// Disable lighting 
-
-	glColor3f(0.6, 0.6, 0.6);	// Dim the ground texture a bit
-
-	glEnable(GL_TEXTURE_2D);	// Enable 2D texturing
-
-	glBindTexture(GL_TEXTURE_2D, tex_ground.texture[0]);	// Bind the ground texture
-
-	glPushMatrix();
-	glBegin(GL_QUADS);
-	glNormal3f(0, 1, 0);	// Set quad normal direction.
-	glTexCoord2f(0, 0);		// Set tex coordinates ( Using (0,0) -> (5,5) with texture wrapping set to GL_REPEAT to simulate the ground repeated grass texture).
-	glVertex3f(-20, 0, -20);
-	glTexCoord2f(5, 0);
-	glVertex3f(20, 0, -20);
-	glTexCoord2f(5, 5);
-	glVertex3f(20, 0, 20);
-	glTexCoord2f(0, 5);
-	glVertex3f(-20, 0, 20);
-	glEnd();
-	glPopMatrix();
-
-	glEnable(GL_LIGHTING);	// Enable lighting again for other entites coming throung the pipeline.
-
-	glColor3f(1, 1, 1);	// Set material back to white instead of grey used for the ground texture.
-}
-//=======================================================================
-// Render Obstacle 1 Ground 1
-//=======================================================================
-void RenderO1G1()
 {
 	glDisable(GL_LIGHTING);	// Disable lighting 
 
@@ -684,7 +670,7 @@ void myDisplay(void)
 	glPushMatrix();
 	glColor3f(1, 1, 0);
 	glScaled(0.45, 0.45, 0.45);
-	glTranslated(1, 1.4, -20);
+	glTranslated(1, 1.4, zpirate);
 	glRotated(180, 0, 1, 0);
 	pirateMinion();
 	glPopMatrix();
@@ -692,7 +678,7 @@ void myDisplay(void)
 	glPushMatrix();
 	glScaled(0.4, 0.4, 0.4);
 	glColor3f(1, 1, 1);
-	glTranslated(1.65, ynormal, znormal);
+	glTranslated(xnormal, ynormal, znormal);
 	glRotated(180, 0, 1, 0);
 	normalMinion();
 	glPopMatrix();
@@ -721,6 +707,14 @@ void myDisplay(void)
 	glScalef(0.7, 0.7, 0.7);
 	model_tree.Draw();
 	glPopMatrix();
+	// Draw Wall Model
+	glPushMatrix();
+	glTranslatef(xwall1, ywall1, zground1-3);
+	glScalef(4.7, 2.7, 2.7);
+	glRotated(wall1_angle, 0, 1, 0);
+	model_wall.Draw();
+	glPopMatrix();
+
 
 
 	glColor3f(1, 1, 1);
@@ -737,7 +731,7 @@ void myDisplay(void)
 	glBindTexture(GL_TEXTURE_2D, tex);
 	gluQuadricTexture(qobj, true);
 	gluQuadricNormals(qobj, GL_SMOOTH);
-	gluSphere(qobj, 100, 100, 100);
+	//gluSphere(qobj, 100, 100, 100);
 	gluDeleteQuadric(qobj);
 	glPopMatrix();
 
@@ -748,6 +742,8 @@ void myDisplay(void)
 //Rotate camera
 void camRot(int value) {
 	if (stop_rotation == 1)
+		return;
+	if (game_over == 1)
 		return;
 
 	float radius = 24.8;
@@ -768,6 +764,8 @@ void camRot(int value) {
 void camRotInverse(int value) {
 	if (stop_rotation == 1)
 		return;
+	if (game_over == 1)
+		return;
 
 	float radius = 24.8;
 	cam_angle -= 0.02f;
@@ -787,8 +785,13 @@ void camRotInverse(int value) {
 
 //Animate Ground
 void animateGround(int value) {
-	if (zground1 > 80)
+	if (game_over == 1)
+		return;
+
+	if (zground1 > 80) {
 		zground1 = -79.9;
+		ywall1 = 0;
+	}
 	if (zground2 > 80)
 		zground2 = -79.9;
 	if (zground3 > 80)
@@ -800,13 +803,55 @@ void animateGround(int value) {
 	zground2 += 0.1;
 	zground3 += 0.1;
 	zground4 += 0.1;
+
+	if (xnormal > xwall1 && xnormal < xwall1+10 && ynormal > ywall1 && ynormal < ywall1+8 &&
+		znormal <= (zground1+15) && znormal > (zground1 + 13)) {
+		zpirate -= 5;
+		ywall1 = -100;
+		lives--;
+		if (lives <= 0) {
+			xnormal = -15;
+			glClearColor(1, 0, 0, 0);
+			game_over = 1;
+			print(1, 15, 25, "Game Over");
+		}
+			
+	}
+
 	glutPostRedisplay();
 	glutTimerFunc(0.004 * 1000, animateGround, 0);
 }
+//Animate Wall1
+void animateWall1(int value) {
+	if (game_over == 1)
+		return;
 
-void animate() {
-	camRot(0);
+	wall1_angle += 5;
+
+	glutPostRedisplay();
+	glutTimerFunc(0.004 * 1000, animateWall1, 0);
 }
+//minion jump
+int stop = 0;
+float step = 0.3;
+void minionJump(int value) {
+	if (game_over == 1)
+		return;
+	if (stop == 1)
+		return;
+
+	ynormal += step;
+
+	if (ynormal > 13)
+		step = -0.1;
+
+	if (ynormal < 1.5)
+		stop = 1;
+
+	glutPostRedisplay();
+	glutTimerFunc(0.004 * 1000, minionJump, 0);
+}
+
 //=======================================================================
 // Keyboard Function
 //=======================================================================
@@ -840,6 +885,31 @@ void myKeyboard(unsigned char button, int x, int y)
 		break;
 	}
 
+	glutPostRedisplay();
+}
+void SpecialKeys(int key, int xx, int yy) {
+	if (game_over == 1)
+		return;
+	switch (key) {
+	case GLUT_KEY_LEFT:
+		if(xnormal > -25)
+			xnormal -= 0.2;		
+		break;
+	case GLUT_KEY_RIGHT:
+		if(xnormal < 25)
+			xnormal += 0.2;
+		break;
+	case GLUT_KEY_UP:
+		step = 0.1;
+		stop = 0;
+		glutTimerFunc(0.004 * 1000, minionJump, 0);
+		break;
+	case GLUT_KEY_DOWN:
+		
+		break;
+	}
+
+	// ask OpenGL to recall the display function to reflect the changes on the window
 	glutPostRedisplay();
 }
 
@@ -890,6 +960,7 @@ void LoadAssets()
 	// Loading Model files
 	model_house.Load("Models/house/house.3DS");
 	model_tree.Load("Models/tree/Tree1.3ds");
+	model_wall.Load("Models/wall/wall.3ds");
 
 	// Loading texture files
 	tex_ground.Load("Textures/ground.bmp");
@@ -911,12 +982,15 @@ void main(int argc, char** argv)
 
 	//glutTimerFunc(0, camRot, 0);
 	glutTimerFunc(0.02 * 1000, animateGround, 0);
+	glutTimerFunc(0.02 * 1000, animateWall1, 0);
 
 	glutCreateWindow(title);
 
 	glutDisplayFunc(myDisplay);
 
 	glutKeyboardFunc(myKeyboard);
+
+	glutSpecialFunc(SpecialKeys);
 
 	//glutMotionFunc(myMotion);
 
