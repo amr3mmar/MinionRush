@@ -4,11 +4,15 @@
 #include "GLTexture.h"
 #include <glut.h>
 #include <math.h>
+#include <sstream>
 
 int WIDTH = 1280;
 int HEIGHT = 720;
 
 GLuint tex;
+GLuint tex1;
+GLuint tex2;
+
 char title[] = "Minion Rush";
 
 // 3D Projection Options
@@ -107,7 +111,7 @@ void print(int x, int y, int z, char *string)
 	len = (int)strlen(string);
 	for (i = 0; i < len; i++)
 	{
-		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, string[i]);
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, string[i]);
 	}
 }
 
@@ -723,196 +727,230 @@ void setupLights() {
 
 void myDisplay(void)
 {
-	setupLights();
-	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (game_over == 0 && win == 0) {
+		setupLights();
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
 
-	GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
-	GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
+		GLfloat lightIntensity[] = { 0.7, 0.7, 0.7, 1.0f };
+		GLfloat lightPosition[] = { 0.0f, 100.0f, 0.0f, 0.0f };
+		glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lightIntensity);
 
-	// Draw Ground 1
-	glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-	glTranslated(0,0,zground1);
-	RenderGround();
-	glDisable(GL_TEXTURE_2D);
-	glPopMatrix();
-	//Draw Ground 2
-	glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-	glTranslated(0,0,zground2);
-	RenderGround();
-	glDisable(GL_TEXTURE_2D);
-	glPopMatrix();
-	//Draw Ground 3
-	glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-	glTranslated(0, 0, zground3);
-	RenderGround();
-	glDisable(GL_TEXTURE_2D);
-	glPopMatrix();
-	//Draw Ground 4
-	glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-	glTranslated(0, 0, zground4);
-	RenderGround();
-	glDisable(GL_TEXTURE_2D);
-	glPopMatrix();
-
-	// Draw Models
-	glPushMatrix();
-	glColor3f(1, 1, 0);
-	glScaled(0.45, 0.45, 0.45);
-	glTranslated(1, 1.4, zpirate);
-	glRotated(180, 0, 1, 0);
-	glRotated(pirate_rotate, 0, 1, 0);
-	pirateMinion();
-	glPopMatrix();
-
-	glPushMatrix();
-	glScaled(minion_scale, minion_scale, minion_scale);
-	glColor3f(1, 1, 1);
-	glTranslated(xnormal, ynormal, znormal);
-	glRotated(180, 0, 1, 0);
-	glRotated(normal_rotate, 0, 1, 0);
-	normalMinion();
-	glPopMatrix();
-
-	if (day == 0) {
-		// Draw Tree Model
+		// Draw Ground 1
 		glPushMatrix();
-		glTranslatef(10, 0, zground1);
-		glScalef(0.7, 0.7, 0.7);
-		model_tree.Draw();
-		glPopMatrix();
-		// Draw Tree Model
-		glPushMatrix();
-		glTranslatef(10, 0, zground2);
-		glScalef(0.7, 0.7, 0.7);
-		model_tree.Draw();
-		glPopMatrix();
-		// Draw Tree Model
-		glPushMatrix();
-		glTranslatef(10, 0, zground3);
-		glScalef(0.7, 0.7, 0.7);
-		model_tree.Draw();
-		glPopMatrix();
-		// Draw Tree Model
-		glPushMatrix();
-		glTranslatef(10, 0, zground4);
-		glScalef(0.7, 0.7, 0.7);
-		model_tree.Draw();
-		glPopMatrix();
-	}
-	else {
-		// Draw Tree Model
-		glPushMatrix();
-		glTranslatef(10, 0, zground1);
-		glScalef(0.7, 0.7, 0.7);
-		model_tree_night.Draw();
-		glPopMatrix();
-		// Draw Tree Model
-		glPushMatrix();
-		glTranslatef(10, 0, zground2);
-		glScalef(0.7, 0.7, 0.7);
-		model_tree_night.Draw();
-		glPopMatrix();
-		// Draw Tree Model
-		glPushMatrix();
-		glTranslatef(10, 0, zground3);
-		glScalef(0.7, 0.7, 0.7);
-		model_tree_night.Draw();
-		glPopMatrix();
-		// Draw Tree Model
-		glPushMatrix();
-		glTranslatef(10, 0, zground4);
-		glScalef(0.7, 0.7, 0.7);
-		model_tree_night.Draw();
-		glPopMatrix();
-	}
-
-	// Draw Wall Model
-	glPushMatrix();
-	glTranslatef(xwall1, ywall1, zground1-3);
-	glScalef(4.7, 2.7, 2.7);
-	glRotated(wall1_angle, 0, 1, 0);
-	model_wall.Draw();
-	glPopMatrix();
-	// Draw Wall Model
-	glPushMatrix();
-	glTranslatef(xwall2, ywall2, zground2 - 3);
-	glScalef(4.7, 2.7, 2.7);
-	glRotated(wall1_angle, 0, 1, 0);
-	model_wall.Draw();
-	glPopMatrix();
-	// Draw Wall Model
-	glPushMatrix();
-	glTranslatef(xwall3, ywall3, zground3 - 3);
-	glScalef(4.7, 2.7, 2.7);
-	glRotated(wall1_angle, 0, 1, 0);
-	model_wall.Draw();
-	glPopMatrix();
-	// Draw Wall Model
-	glPushMatrix();
-	glTranslatef(xwall4, ywall4, zground4 - 3);
-	glScalef(4.7, 2.7, 2.7);
-	glRotated(wall1_angle, 0, 1, 0);
-	model_wall.Draw();
-	glPopMatrix();
-
-	// Draw goblin
-	glPushMatrix();
-	glTranslatef(xgoblin, ygoblin, zground3);
-	glRotated(wall1_angle, 0, 1, 0);
-	glRotated(wall1_angle, 1, 0, 0);
-	glScalef(6, 6, 6);
-	drawGoblin();
-	glPopMatrix();
-
-	glColor3f(1, 1, 1);
-
-	//sky box
-	if (day == 0) {
-		glClearColor(1,0.5,0,0);
 		glEnable(GL_TEXTURE_2D);
-
-		glPushMatrix();
-		GLUquadricObj * qobj;
-		qobj = gluNewQuadric();
-		glScaled(0.5, 0.5, 0.5);
-		glTranslated(50, 0, 0);
-		glRotated(90, 1, 0, 1);
-		glBindTexture(GL_TEXTURE_2D, tex);
-		gluQuadricTexture(qobj, true);
-		gluQuadricNormals(qobj, GL_SMOOTH);
-		gluSphere(qobj, 100, 100, 100);
-		gluDeleteQuadric(qobj);
-		glPopMatrix();
-
+		glTranslated(0, 0, zground1);
+		RenderGround();
 		glDisable(GL_TEXTURE_2D);
-	}
-	if (day == 1) {
-		glClearColor(1, 0.5, 0, 0);
-	}		
-	if (day == 2) {
-		glClearColor(0, 0, 0, 0);
-		glPushMatrix();
-		glTranslatef(-7, 7, -5);
-		glutSolidSphere(1.5, 50, 50);
 		glPopMatrix();
+		//Draw Ground 2
+		glPushMatrix();
+		glEnable(GL_TEXTURE_2D);
+		glTranslated(0, 0, zground2);
+		RenderGround();
+		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
+		//Draw Ground 3
+		glPushMatrix();
+		glEnable(GL_TEXTURE_2D);
+		glTranslated(0, 0, zground3);
+		RenderGround();
+		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
+		//Draw Ground 4
+		glPushMatrix();
+		glEnable(GL_TEXTURE_2D);
+		glTranslated(0, 0, zground4);
+		RenderGround();
+		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
+
+		// Draw Models
+		glPushMatrix();
+		glColor3f(1, 1, 0);
+		glScaled(0.45, 0.45, 0.45);
+		glTranslated(1, 1.4, zpirate);
+		glRotated(180, 0, 1, 0);
+		glRotated(pirate_rotate, 0, 1, 0);
+		pirateMinion();
+		glPopMatrix();
+
+		glPushMatrix();
+		glScaled(minion_scale, minion_scale, minion_scale);
+		glColor3f(1, 1, 1);
+		glTranslated(xnormal, ynormal, znormal);
+		glRotated(180, 0, 1, 0);
+		glRotated(normal_rotate, 0, 1, 0);
+		normalMinion();
+		glPopMatrix();
+
+		if (day == 0) {
+			// Draw Tree Model
+			glPushMatrix();
+			glTranslatef(10, 0, zground1);
+			glScalef(0.7, 0.7, 0.7);
+			model_tree.Draw();
+			glPopMatrix();
+			// Draw Tree Model
+			glPushMatrix();
+			glTranslatef(10, 0, zground2);
+			glScalef(0.7, 0.7, 0.7);
+			model_tree.Draw();
+			glPopMatrix();
+			// Draw Tree Model
+			glPushMatrix();
+			glTranslatef(10, 0, zground3);
+			glScalef(0.7, 0.7, 0.7);
+			model_tree.Draw();
+			glPopMatrix();
+			// Draw Tree Model
+			glPushMatrix();
+			glTranslatef(10, 0, zground4);
+			glScalef(0.7, 0.7, 0.7);
+			model_tree.Draw();
+			glPopMatrix();
+		}
+		else {
+			// Draw Tree Model
+			glPushMatrix();
+			glTranslatef(10, 0, zground1);
+			glScalef(0.7, 0.7, 0.7);
+			model_tree_night.Draw();
+			glPopMatrix();
+			// Draw Tree Model
+			glPushMatrix();
+			glTranslatef(10, 0, zground2);
+			glScalef(0.7, 0.7, 0.7);
+			model_tree_night.Draw();
+			glPopMatrix();
+			// Draw Tree Model
+			glPushMatrix();
+			glTranslatef(10, 0, zground3);
+			glScalef(0.7, 0.7, 0.7);
+			model_tree_night.Draw();
+			glPopMatrix();
+			// Draw Tree Model
+			glPushMatrix();
+			glTranslatef(10, 0, zground4);
+			glScalef(0.7, 0.7, 0.7);
+			model_tree_night.Draw();
+			glPopMatrix();
+		}
+
+		// Draw Wall Model
+		glPushMatrix();
+		glTranslatef(xwall1, ywall1, zground1 - 3);
+		glScalef(4.7, 2.7, 2.7);
+		glRotated(wall1_angle, 0, 1, 0);
+		model_wall.Draw();
+		glPopMatrix();
+		// Draw Wall Model
+		glPushMatrix();
+		glTranslatef(xwall2, ywall2, zground2 - 3);
+		glScalef(4.7, 2.7, 2.7);
+		glRotated(wall1_angle, 0, 1, 0);
+		model_wall.Draw();
+		glPopMatrix();
+		// Draw Wall Model
+		glPushMatrix();
+		glTranslatef(xwall3, ywall3, zground3 - 3);
+		glScalef(4.7, 2.7, 2.7);
+		glRotated(wall1_angle, 0, 1, 0);
+		model_wall.Draw();
+		glPopMatrix();
+		// Draw Wall Model
+		glPushMatrix();
+		glTranslatef(xwall4, ywall4, zground4 - 3);
+		glScalef(4.7, 2.7, 2.7);
+		glRotated(wall1_angle, 0, 1, 0);
+		model_wall.Draw();
+		glPopMatrix();
+
+		// Draw goblin
+		glPushMatrix();
+		glTranslatef(xgoblin, ygoblin, zground3);
+		glRotated(wall1_angle, 0, 1, 0);
+		glRotated(wall1_angle, 1, 0, 0);
+		glScalef(6, 6, 6);
+		drawGoblin();
+		glPopMatrix();
+
+		glColor3f(1, 1, 1);
+
+		//sky box
+		if (day == 0) {
+			//glClearColor(1,0.5,0,0);
+			glEnable(GL_TEXTURE_2D);
+
+			glPushMatrix();
+			GLUquadricObj * qobj;
+			qobj = gluNewQuadric();
+			glScaled(0.5, 0.5, 0.5);
+			glTranslated(50, 0, 0);
+			glRotated(90, 1, 0, 1);
+			glBindTexture(GL_TEXTURE_2D, tex);
+			gluQuadricTexture(qobj, true);
+			gluQuadricNormals(qobj, GL_SMOOTH);
+			gluSphere(qobj, 100, 100, 100);
+			gluDeleteQuadric(qobj);
+			glPopMatrix();
+
+			glDisable(GL_TEXTURE_2D);
+		}
+		if (day == 1) {
+			glEnable(GL_TEXTURE_2D);
+
+			glPushMatrix();
+			GLUquadricObj * qobj;
+			qobj = gluNewQuadric();
+			glScaled(0.5, 0.5, 0.5);
+			glTranslated(50, 0, 0);
+			glRotated(90, 1, 0, 1);
+			glBindTexture(GL_TEXTURE_2D, tex1);
+			gluQuadricTexture(qobj, true);
+			gluQuadricNormals(qobj, GL_SMOOTH);
+			gluSphere(qobj, 100, 100, 100);
+			gluDeleteQuadric(qobj);
+			glPopMatrix();
+
+			glDisable(GL_TEXTURE_2D);
+		}
+		if (day == 2) {
+			glEnable(GL_TEXTURE_2D);
+
+			glPushMatrix();
+			GLUquadricObj * qobj;
+			qobj = gluNewQuadric();
+			glScaled(0.5, 0.5, 0.5);
+			glTranslated(50, 0, 0);
+			glRotated(90, 1, 0, 1);
+			glBindTexture(GL_TEXTURE_2D, tex2);
+			gluQuadricTexture(qobj, true);
+			gluQuadricNormals(qobj, GL_SMOOTH);
+			gluSphere(qobj, 100, 100, 100);
+			gluDeleteQuadric(qobj);
+			glPopMatrix();
+
+			glDisable(GL_TEXTURE_2D);
+		}
+
+		glutSwapBuffers();
 	}
-	
+else {
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClearColor(1,1,1,0);
 	glutSwapBuffers();
+}
+		
+	
+	
 }
 
 //Rotate camera
 void camRot(int value) {
-	if (stop_rotation == 1)
-		return;
 	if (game_over == 1 || win == 1)
 		return;
 
@@ -932,8 +970,6 @@ void camRot(int value) {
 	glutPostRedisplay();
 }
 void camRotInverse(int value) {
-	if (stop_rotation == 1)
-		return;
 	if (game_over == 1 || win == 1)
 		return;
 
@@ -1002,7 +1038,11 @@ void animateGround(int value) {
 			xnormal = -15;
 			glClearColor(1, 0, 0, 0);
 			game_over = 1;
-			print(Eye.x, 4,Eye.z -5, "Game Over");
+			char integer_string[32];
+			sprintf(integer_string, "%d", score);
+			char text[64] = "Oops, You lost with a final score  ";
+			strcat(text, integer_string);
+			print(-5, 5.5, 0, text);
 		}
 			
 	}
@@ -1016,7 +1056,11 @@ void animateGround(int value) {
 			xnormal = -15;
 			glClearColor(1, 0, 0, 0);
 			game_over = 1;
-			print(Eye.x, 4, Eye.z-5, "Game Over");
+			char integer_string[32];
+			sprintf(integer_string, "%d", score);
+			char text[64] = "Oops, You lost with a final score  ";
+			strcat(text, integer_string);
+			print(-5, 5.5, 0, text);
 		}
 
 	}
@@ -1030,7 +1074,11 @@ void animateGround(int value) {
 			xnormal = -15;
 			glClearColor(1, 0, 0, 0);
 			game_over = 1;
-			print(Eye.x, 4, Eye.z-5, "Game Over");
+			char integer_string[32];
+			sprintf(integer_string, "%d", score);
+			char text[64] = "Oops, You lost with a final score  ";
+			strcat(text, integer_string);
+			print(-5, 5.5, 0, text);
 		}
 
 	}
@@ -1044,7 +1092,11 @@ void animateGround(int value) {
 			xnormal = -15;
 			glClearColor(1, 0, 0, 0);
 			game_over = 1;
-			print(Eye.x, 4, Eye.z-5, "Game Over");
+			char integer_string[32];
+			sprintf(integer_string, "%d", score);
+			char text[64] = "Oops, You lost with a final score  ";
+			strcat(text, integer_string);
+			print(-5, 5.5, 0, text);
 		}
 
 	}
@@ -1060,8 +1112,11 @@ void animateGround(int value) {
 			normal_rotate = -90;
 			pirate_rotate = 90;
 			win = 1;
-			char *message = "Congratulations!You win with a final score ";
-			print(Eye.x, 8, Eye.z-15, "Congratulations");
+			char integer_string[32];
+			sprintf(integer_string, "%d", score);
+			char text[64] = "Congratulations!You win with a final score  ";
+			strcat(text, integer_string);
+			print(-5, 5.5, 0, text);
 		}
 
 	}
@@ -1176,26 +1231,41 @@ void myKeyboard(unsigned char button, int x, int y)
 	switch (button)
 	{
 	case 's':
+		if (game_over == 1 || win == 1)
+			return;
 		third_person_camera = !third_person_camera;
+		glutPostRedisplay();
 		break;
 	case 'z':
-		if (zigzag_motion)
-			zigzag_motion = false;
-		else
-			zigzag_motion = true;
+		if (game_over == 1 || win == 1)
+			return;
+		zigzag_motion = !zigzag_motion;
+		glutPostRedisplay();
 		break;
 	case 'd':
+		if (game_over == 1 || win == 1)
+			return;
 		camRot(0);
+		glutPostRedisplay();
 		break;
 	case 'a':
+		if (game_over == 1 || win == 1)
+			return;
 		camRotInverse(0);
+		glutPostRedisplay();
 		break;
 	case 'l':
+		if (game_over == 1 || win == 1)
+			return;
 		lights = !lights;
+		glutPostRedisplay();
 		break;
 	case 'u':
+		if (game_over == 1 || win == 1)
+			return;
 		glLoadIdentity();	//Clear Model_View Matrix
 		gluLookAt(20, 41, 20, At.x, At.y, At.z, Up.x, Up.y, Up.z);	//Setup Camera with modified parameters
+		glutPostRedisplay();
 		break;
 	case 27:
 		exit(0);
@@ -1204,7 +1274,7 @@ void myKeyboard(unsigned char button, int x, int y)
 		break;
 	}
 
-	glutPostRedisplay();
+	
 }
 void SpecialKeys(int key, int xx, int yy) {
 	if (game_over == 1 || win == 1)
@@ -1285,6 +1355,8 @@ void LoadAssets()
 	// Loading texture files
 	tex_ground.Load("Textures/ground.bmp");
 	loadBMP(&tex, "Textures/sky4-jpg.bmp", true);
+	loadBMP(&tex1, "Textures/midday.bmp", true);
+	loadBMP(&tex2, "Textures/night.bmp", true);
 }
 
 //=======================================================================
