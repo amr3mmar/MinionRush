@@ -1,9 +1,10 @@
 ﻿  OpenGLMeshLoader.cpp
 e:\guc\7th semester\graphics\project\texturebuilder.h(27): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
 e:\guc\7th semester\graphics\project\texturebuilder.h(28): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-e:\guc\7th semester\graphics\project\openglmeshloader.cpp(117): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-e:\guc\7th semester\graphics\project\openglmeshloader.cpp(695): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-e:\guc\7th semester\graphics\project\openglmeshloader.cpp(696): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-e:\guc\7th semester\graphics\project\openglmeshloader.cpp(717): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(128): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(707): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(708): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(732): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+cl : Command line warning D9028: minimal rebuild failure, reverting to normal build
 GLTexture.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   OpenGLMeshLoader.vcxproj -> E:\GUC\7th semester\Graphics\Project\Debug\OpenGLMeshLoader.exe

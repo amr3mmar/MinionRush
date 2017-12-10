@@ -17,6 +17,10 @@ GLdouble aspectRatio = (GLdouble)WIDTH / (GLdouble)HEIGHT;
 GLdouble zNear = 0.1;
 GLdouble zFar = 100;
 
+bool lights = true;
+bool zigzag_motion = false;
+bool third_person_camera = true;
+
 //  Normal Minion
 float ynormal = 1.5;
 float znormal = 30;
@@ -28,7 +32,7 @@ float minion_scale = 0.4;
 // Pirate Minion
 float xPirate = 0.0;
 float yPirate = 0.2;
-float zpirate = -20;
+float zpirate = -25;
 float tPirate = 0;
 int swordAngle = 0;
 int sword_swing = 0;
@@ -37,6 +41,7 @@ bool move_pirate = false;
 
 float cam_angle = 0.0;
 int stop_rotation = 0;
+int day = 0;
 
 float zground1 = 0;
 float zground2 = -40;
@@ -56,6 +61,9 @@ int game_over = 0;
 int win = 0;
 float xgoblin = -5;
 float ygoblin = 2;
+
+float normal_rotate = 0;
+float pirate_rotate = 0;
 
 int lives = 2;
 int score = 0;
@@ -87,19 +95,22 @@ int cameraZoom = 0;
 Model_3DS model_house;
 Model_3DS model_tree;
 Model_3DS model_wall;
+Model_3DS model_tree_night;
 
 // Textures
 GLTexture tex_ground;
 
-void print(float x, float y, float z, char *string) {
+void print(int x, int y, int z, char *string)
+{
 	int len, i;
-	glRasterPos3f(x, y, z);
+	glRasterPos3d(x, y, z);
 	len = (int)strlen(string);
-	for ( i = 0; i < len; i++)
+	for (i = 0; i < len; i++)
 	{
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, string[i]);
 	}
 }
+
 
 //=======================================================================
 // Lighting Configuration Function
@@ -692,24 +703,28 @@ void drawGoblin() {
 
 
 void setupLights() {
-	GLfloat ambient[] = { 0.7f, 0.7f, 0.7, 1.0f };
-	GLfloat diffuse[] = { 0.6f, 0.6f, 0.6, 1.0f };
-	GLfloat specular[] = { 1.0f, 1.0f, 1.0, 1.0f };
-	GLfloat shininess[] = { 50 };
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
+	if (lights) {
+		GLfloat ambient[] = { 0.7f, 0.7f, 0.7, 1.0f };
+		GLfloat diffuse[] = { 0.6f, 0.6f, 0.6, 1.0f };
+		GLfloat specular[] = { 1.0f, 1.0f, 1.0, 1.0f };
+		GLfloat shininess[] = { 50 };
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+		glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
 
-	GLfloat lightIntensity[] = { 0.7f, 0.7f, 1, 1.0f };
-	GLfloat lightPosition[] = { -7.0f, 6.0f, 3.0f, 0.0f };
-	glLightfv(GL_LIGHT0, GL_POSITION, lightIntensity);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightIntensity);
+		GLfloat lightIntensity[] = { 0.7f, 0.7f, 1, 1.0f };
+		GLfloat lightPosition[] = { -7.0f, 6.0f, 3.0f, 0.0f };
+		glLightfv(GL_LIGHT0, GL_POSITION, lightIntensity);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightIntensity);
+	}
+	
 }
 
 void myDisplay(void)
 {
-	//setupLights();
+	setupLights();
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -754,6 +769,7 @@ void myDisplay(void)
 	glScaled(0.45, 0.45, 0.45);
 	glTranslated(1, 1.4, zpirate);
 	glRotated(180, 0, 1, 0);
+	glRotated(pirate_rotate, 0, 1, 0);
 	pirateMinion();
 	glPopMatrix();
 
@@ -762,33 +778,63 @@ void myDisplay(void)
 	glColor3f(1, 1, 1);
 	glTranslated(xnormal, ynormal, znormal);
 	glRotated(180, 0, 1, 0);
+	glRotated(normal_rotate, 0, 1, 0);
 	normalMinion();
 	glPopMatrix();
 
-	// Draw Tree Model
-	glPushMatrix();
-	glTranslatef(10, 0, zground1);
-	glScalef(0.7, 0.7, 0.7);
-	model_tree.Draw();
-	glPopMatrix();
-	// Draw Tree Model
-	glPushMatrix();
-	glTranslatef(10, 0, zground2);
-	glScalef(0.7, 0.7, 0.7);
-	model_tree.Draw();
-	glPopMatrix();
-	// Draw Tree Model
-	glPushMatrix();
-	glTranslatef(10, 0, zground3);
-	glScalef(0.7, 0.7, 0.7);
-	model_tree.Draw();
-	glPopMatrix();
-	// Draw Tree Model
-	glPushMatrix();
-	glTranslatef(10, 0, zground4);
-	glScalef(0.7, 0.7, 0.7);
-	model_tree.Draw();
-	glPopMatrix();
+	if (day == 0) {
+		// Draw Tree Model
+		glPushMatrix();
+		glTranslatef(10, 0, zground1);
+		glScalef(0.7, 0.7, 0.7);
+		model_tree.Draw();
+		glPopMatrix();
+		// Draw Tree Model
+		glPushMatrix();
+		glTranslatef(10, 0, zground2);
+		glScalef(0.7, 0.7, 0.7);
+		model_tree.Draw();
+		glPopMatrix();
+		// Draw Tree Model
+		glPushMatrix();
+		glTranslatef(10, 0, zground3);
+		glScalef(0.7, 0.7, 0.7);
+		model_tree.Draw();
+		glPopMatrix();
+		// Draw Tree Model
+		glPushMatrix();
+		glTranslatef(10, 0, zground4);
+		glScalef(0.7, 0.7, 0.7);
+		model_tree.Draw();
+		glPopMatrix();
+	}
+	else {
+		// Draw Tree Model
+		glPushMatrix();
+		glTranslatef(10, 0, zground1);
+		glScalef(0.7, 0.7, 0.7);
+		model_tree_night.Draw();
+		glPopMatrix();
+		// Draw Tree Model
+		glPushMatrix();
+		glTranslatef(10, 0, zground2);
+		glScalef(0.7, 0.7, 0.7);
+		model_tree_night.Draw();
+		glPopMatrix();
+		// Draw Tree Model
+		glPushMatrix();
+		glTranslatef(10, 0, zground3);
+		glScalef(0.7, 0.7, 0.7);
+		model_tree_night.Draw();
+		glPopMatrix();
+		// Draw Tree Model
+		glPushMatrix();
+		glTranslatef(10, 0, zground4);
+		glScalef(0.7, 0.7, 0.7);
+		model_tree_night.Draw();
+		glPopMatrix();
+	}
+
 	// Draw Wall Model
 	glPushMatrix();
 	glTranslatef(xwall1, ywall1, zground1-3);
@@ -820,36 +866,46 @@ void myDisplay(void)
 
 	// Draw goblin
 	glPushMatrix();
-	glTranslatef(xgoblin, ygoblin, zground1 - 3);
+	glTranslatef(xgoblin, ygoblin, zground3);
 	glRotated(wall1_angle, 0, 1, 0);
 	glRotated(wall1_angle, 1, 0, 0);
 	glScalef(6, 6, 6);
 	drawGoblin();
 	glPopMatrix();
 
-	
-
-
-
 	glColor3f(1, 1, 1);
 
 	//sky box
-	glEnable(GL_TEXTURE_2D);
+	if (day == 0) {
+		glClearColor(1,0.5,0,0);
+		glEnable(GL_TEXTURE_2D);
 
-	glPushMatrix();
-	GLUquadricObj * qobj;
-	qobj = gluNewQuadric();
-	glScaled(0.5, 0.5, 0.5);
-	glTranslated(50, 0, 0);
-	glRotated(90, 1, 0, 1);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	gluQuadricTexture(qobj, true);
-	gluQuadricNormals(qobj, GL_SMOOTH);
-	//gluSphere(qobj, 100, 100, 100);
-	gluDeleteQuadric(qobj);
-	glPopMatrix();
+		glPushMatrix();
+		GLUquadricObj * qobj;
+		qobj = gluNewQuadric();
+		glScaled(0.5, 0.5, 0.5);
+		glTranslated(50, 0, 0);
+		glRotated(90, 1, 0, 1);
+		glBindTexture(GL_TEXTURE_2D, tex);
+		gluQuadricTexture(qobj, true);
+		gluQuadricNormals(qobj, GL_SMOOTH);
+		gluSphere(qobj, 100, 100, 100);
+		gluDeleteQuadric(qobj);
+		glPopMatrix();
 
-	glDisable(GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_2D);
+	}
+	if (day == 1) {
+		glClearColor(1, 0.5, 0, 0);
+	}		
+	if (day == 2) {
+		glClearColor(0, 0, 0, 0);
+		glPushMatrix();
+		glTranslatef(-7, 7, -5);
+		glutSolidSphere(1.5, 50, 50);
+		glPopMatrix();
+	}
+	
 	glutSwapBuffers();
 }
 
@@ -868,8 +924,8 @@ void camRot(int value) {
 
 	glLoadIdentity();	//Clear Model_View Matrix
 
-
 	gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);	//Setup Camera with modified parameters
+
 	GLfloat light_position[] = { 0.0f, 10.0f, 0.0f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
@@ -898,6 +954,8 @@ void camRotInverse(int value) {
 }
 
 float step_goblin = 0.0;
+float x_step = 0.2;
+float x_translate = 0;
 //Animate Ground
 void animateGround(int value) {
 	if (game_over == 1 || win == 1)
@@ -915,6 +973,7 @@ void animateGround(int value) {
 	if (zground3 > 80) {
 		zground3 = -79.7;
 		ywall3 = 0;
+		ygoblin = 2;
 	}
 	if (zground4 > 80) {
 		zground4 = -79.7;
@@ -935,79 +994,100 @@ void animateGround(int value) {
 
 	if (xnormal > xwall1 && xnormal < xwall1+10 && ynormal > ywall1 && ynormal < ywall1+8 &&
 		znormal <= (zground1+16) && znormal > (zground1 + 15)) {
-		zpirate -= 5;
+		zpirate -= 20;
 		ywall1 = -100;
 		lives--;
 		score -= 10;
-		minion_scale -= 0.05;
 		if (lives <= 0) {
 			xnormal = -15;
 			glClearColor(1, 0, 0, 0);
 			game_over = 1;
-			print(1, 15, 25, "Game Over");
+			print(Eye.x, 4,Eye.z -5, "Game Over");
 		}
 			
 	}
 	if (xnormal > xwall2-12 && xnormal < xwall2 && ynormal > ywall2 && ynormal < ywall2 + 8 &&
 		znormal <= (zground2 + 16) && znormal >(zground2 + 15)) {
-		zpirate -= 5;
+		zpirate -= 20;
 		ywall2 = -100;
 		lives--;
 		score -= 10;
-		minion_scale -= 0.05;
 		if (lives <= 0) {
 			xnormal = -15;
 			glClearColor(1, 0, 0, 0);
 			game_over = 1;
-			print(1, 15, 25, "Game Over");
+			print(Eye.x, 4, Eye.z-5, "Game Over");
 		}
 
 	}
 	if (xnormal > xwall3-5 && xnormal < xwall3 + 5 && ynormal > ywall3 && ynormal < ywall3 + 8 &&
 		znormal <= (zground3 + 16) && znormal >(zground3 + 15)) {
-		zpirate -= 5;
+		zpirate -= 20;
 		ywall3 = -100;
 		lives--;
 		score -= 10;
-		minion_scale -= 0.05;
 		if (lives <= 0) {
 			xnormal = -15;
 			glClearColor(1, 0, 0, 0);
 			game_over = 1;
-			print(1, 15, 25, "Game Over");
+			print(Eye.x, 4, Eye.z-5, "Game Over");
 		}
 
 	}
 	if (xnormal > xwall4 && xnormal < xwall4 + 10 && ynormal > ywall4 && ynormal < ywall4 + 8 &&
 		znormal <= (zground4 + 16) && znormal >(zground4 + 15)) {
-		zpirate -= 5;
+		zpirate -= 20;
 		ywall4 = -100;
 		lives--;
 		score -= 10;
-		minion_scale -= 0.05;
 		if (lives <= 0) {
 			xnormal = -15;
 			glClearColor(1, 0, 0, 0);
 			game_over = 1;
-			print(1, 15, 25, "Game Over");
+			print(Eye.x, 4, Eye.z-5, "Game Over");
 		}
 
 	}
 
-	if (xnormal > xgoblin -1 && xnormal < xgoblin+1 && ynormal >= ygoblin-1 && ynormal <= ygoblin+4 &&
-		znormal <= (zground1 +17) && znormal >(zground1 + 15)) {
-		zpirate += 5;
+	if (xnormal > xgoblin -13 && xnormal < xgoblin-6 && ynormal >= ygoblin-1 && ynormal <= ygoblin+4 &&
+		zground3>12 && zground3<20 ) {
+		zpirate += 10;
 		ygoblin = -100;
 		lives++;
 		score += 10;
-		minion_scale += 0.05;
-		if (lives == 3) {
+		if (lives == 7) {
 			glClearColor(0, 1, 0, 0);
+			normal_rotate = -90;
+			pirate_rotate = 90;
 			win = 1;
 			char *message = "Congratulations!You win with a final score ";
-			print(1, 15, 25, message);
+			print(Eye.x, 8, Eye.z-15, "Congratulations");
 		}
 
+	}
+
+	if (zigzag_motion)
+	{
+		if (x_translate> 2)
+			x_step = -0.2;
+		if (x_translate < -2)
+			x_step = 0.2;
+
+		x_translate += x_step;
+
+		if (xnormal + x_translate < 25 && xnormal + x_translate > -25)
+			xnormal += x_step;
+	}
+
+
+	if (third_person_camera) {
+		glLoadIdentity();	//Clear Model_View Matrix
+		gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);	//Setup Camera with modified parameters
+	}
+	else
+	{
+		glLoadIdentity();	//Clear Model_View Matrix
+		gluLookAt(xnormal/2, ynormal+2, znormal-20, xnormal/2, ynormal, At.z, Up.x, Up.y, Up.z);	//Setup Camera with modified parameters
 	}
 
 	glutPostRedisplay();
@@ -1023,12 +1103,52 @@ void animateWall1(int value) {
 	glutPostRedisplay();
 	glutTimerFunc(0.004 * 1000, animateWall1, 0);
 }
+void changeDay(int value) {
+	if (game_over == 1 || win == 1)
+		return;
+
+	if (day == 2)
+		day = 0;
+	else day++;
+
+	glutPostRedisplay();
+	glutTimerFunc(20 * 1000, changeDay, 0);
+}
+
+void bezier(float t, int *p0, int *p1, int *p2, int *p3, float *x, float *z)
+{
+	*x = pow((1 - t), 3) * p0[0] + 3 * t * pow((1 - t), 2) * p1[0] + 3 * pow(t, 2) * (1 - t) * p2[0] + pow(t, 3) * p3[0];
+	*z = pow((1 - t), 3) * p0[1] + 3 * t * pow((1 - t), 2) * p1[1] + 3 * pow(t, 2) * (1 - t) * p2[1] + pow(t, 3) * p3[1];
+}
 
 
+void animatePirate(int value)
+{
+	if (game_over == 1 || win == 1)
+		return;
+	
+		int p0[] = { 3, 6 };
+		int p1[] = { 4, 10 };
+		int p2[] = { 5, 1 };
+		int p3[] = { 3, 3 };
+		
+		tPirate += 0.01;
+		if (tPirate > 1.3)
+			tPirate = 0;
+		bezier(tPirate, p0, p1, p2, p3, &xPirate, &yPirate);
+
+		swordAngle = (swordAngle + 5) % 360;
+
+		glutPostRedisplay();
+		glutTimerFunc(0.004 * 1000, animatePirate, 0);
+
+	
+}
 
 //minion jump
 int stop = 0;
 float step = 0.3;
+
 void minionJump(int value) {
 	if (game_over == 1 || win == 1)
 		return;
@@ -1043,6 +1163,7 @@ void minionJump(int value) {
 	if (ynormal < 1.5)
 		stop = 1;
 
+	
 	glutPostRedisplay();
 	glutTimerFunc(0.004 * 1000, minionJump, 0);
 }
@@ -1054,13 +1175,14 @@ void myKeyboard(unsigned char button, int x, int y)
 {
 	switch (button)
 	{
-	case 'x':
-		stop_rotation = 1;
-		///std::cout << "You Lost\n";
+	case 's':
+		third_person_camera = !third_person_camera;
 		break;
-	case 'c':
-		stop_rotation = 0;
-		camRot(0);
+	case 'z':
+		if (zigzag_motion)
+			zigzag_motion = false;
+		else
+			zigzag_motion = true;
 		break;
 	case 'd':
 		camRot(0);
@@ -1068,8 +1190,10 @@ void myKeyboard(unsigned char button, int x, int y)
 	case 'a':
 		camRotInverse(0);
 		break;
+	case 'l':
+		lights = !lights;
+		break;
 	case 'u':
-		stop_rotation = 1;
 		glLoadIdentity();	//Clear Model_View Matrix
 		gluLookAt(20, 41, 20, At.x, At.y, At.z, Up.x, Up.y, Up.z);	//Setup Camera with modified parameters
 		break;
@@ -1156,6 +1280,7 @@ void LoadAssets()
 	model_house.Load("Models/house/house.3DS");
 	model_tree.Load("Models/tree/Tree1.3ds");
 	model_wall.Load("Models/wall/wall.3ds");
+	model_tree_night.Load("Models/test/dead_trees.3ds");
 
 	// Loading texture files
 	tex_ground.Load("Textures/ground.bmp");
@@ -1178,8 +1303,9 @@ void main(int argc, char** argv)
 	//glutTimerFunc(0, camRot, 0);
 	glutTimerFunc(0.02 * 1000, animateGround, 0);
 	glutTimerFunc(0.02 * 1000, animateWall1, 0);
-	//glutTimerFunc(0.02 * 1000, animateFunky2, 0);
-	//glutTimerFunc(0.02 * 1000, animateFunky4, 0);
+	glutTimerFunc(0.02 * 1000, animatePirate, 0);
+	glutTimerFunc(20 * 1000, changeDay, 0);
+
 
 	glutCreateWindow(title);
 
