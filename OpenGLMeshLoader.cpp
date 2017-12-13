@@ -100,6 +100,7 @@ Model_3DS model_house;
 Model_3DS model_tree;
 Model_3DS model_wall;
 Model_3DS model_tree_night;
+Model_3DS model_minion;
 
 // Textures
 GLTexture tex_ground;
@@ -784,7 +785,9 @@ void myDisplay(void)
 		glTranslated(xnormal, ynormal, znormal);
 		glRotated(180, 0, 1, 0);
 		glRotated(normal_rotate, 0, 1, 0);
-		normalMinion();
+		glScaled(minion_scale*5, minion_scale*5, minion_scale*5);
+		//normalMinion();
+		model_minion.Draw();
 		glPopMatrix();
 
 		if (day == 0) {
@@ -1351,6 +1354,7 @@ void LoadAssets()
 	model_tree.Load("Models/tree/Tree1.3ds");
 	model_wall.Load("Models/wall/wall.3ds");
 	model_tree_night.Load("Models/test/dead_trees.3ds");
+	model_minion.Load("Models/minion_3ds/minion_3ds.3ds");
 
 	// Loading texture files
 	tex_ground.Load("Textures/ground.bmp");
