@@ -1,9 +1,29 @@
 ﻿  OpenGLMeshLoader.cpp
 e:\guc\7th semester\graphics\project\texturebuilder.h(27): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
 e:\guc\7th semester\graphics\project\texturebuilder.h(28): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-e:\guc\7th semester\graphics\project\openglmeshloader.cpp(88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-e:\guc\7th semester\graphics\project\openglmeshloader.cpp(598): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-e:\guc\7th semester\graphics\project\openglmeshloader.cpp(599): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-e:\guc\7th semester\graphics\project\openglmeshloader.cpp(620): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(133): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(713): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(714): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(739): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(1046): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(1048): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(93): note: see declaration of 'strcat'
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(1064): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(1066): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(93): note: see declaration of 'strcat'
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(1082): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(1084): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(93): note: see declaration of 'strcat'
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(1100): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(1102): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(93): note: see declaration of 'strcat'
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(1120): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
+e:\guc\7th semester\graphics\project\openglmeshloader.cpp(1122): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(93): note: see declaration of 'strcat'
 GLTexture.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
   OpenGLMeshLoader.vcxproj -> E:\GUC\7th semester\Graphics\Project\Debug\OpenGLMeshLoader.exe
