@@ -1034,7 +1034,7 @@ void animateGround(int value) {
 
 	if (xnormal > xwall1 && xnormal < xwall1+10 && ynormal > ywall1 && ynormal < ywall1+8 &&
 		znormal <= (zground1+16) && znormal > (zground1 + 15)) {
-		zpirate -= 20;
+		zpirate -= 10;
 		ywall1 = -100;
 		lives--;
 		score -= 10;
@@ -1052,7 +1052,7 @@ void animateGround(int value) {
 	}
 	if (xnormal > xwall2-12 && xnormal < xwall2 && ynormal > ywall2 && ynormal < ywall2 + 8 &&
 		znormal <= (zground2 + 16) && znormal >(zground2 + 15)) {
-		zpirate -= 20;
+		zpirate -= 10;
 		ywall2 = -100;
 		lives--;
 		score -= 10;
@@ -1070,7 +1070,7 @@ void animateGround(int value) {
 	}
 	if (xnormal > xwall3-5 && xnormal < xwall3 + 5 && ynormal > ywall3 && ynormal < ywall3 + 8 &&
 		znormal <= (zground3 + 16) && znormal >(zground3 + 15)) {
-		zpirate -= 20;
+		zpirate -= 10;
 		ywall3 = -100;
 		lives--;
 		score -= 10;
@@ -1088,7 +1088,7 @@ void animateGround(int value) {
 	}
 	if (xnormal > xwall4 && xnormal < xwall4 + 10 && ynormal > ywall4 && ynormal < ywall4 + 8 &&
 		znormal <= (zground4 + 16) && znormal >(zground4 + 15)) {
-		zpirate -= 20;
+		zpirate -= 10;
 		ywall4 = -100;
 		lives--;
 		score -= 10;
@@ -1377,7 +1377,6 @@ void main(int argc, char** argv)
 
 	glutInitWindowPosition(0, 0);
 
-	//glutTimerFunc(0, camRot, 0);
 	glutTimerFunc(0.02 * 1000, animateGround, 0);
 	glutTimerFunc(0.02 * 1000, animateWall1, 0);
 	glutTimerFunc(0.02 * 1000, animatePirate, 0);
@@ -1391,8 +1390,6 @@ void main(int argc, char** argv)
 	glutKeyboardFunc(myKeyboard);
 
 	glutSpecialFunc(SpecialKeys);
-
-	//glutMotionFunc(myMotion);
 
 	glutMouseFunc(myMouse);
 
